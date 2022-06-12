@@ -82,13 +82,6 @@ TP_VPF_map = {
         3: 7
     }
 
-def TP_UDL_calc(pkt):
-    if pkt.TP_UDHI == 1:
-        udl = pkt.TP_UDL - pkt.TP_UDHL - 1
-    else:
-        udl = pkt.TP_UDL
-    return udl
-
 class SMSSubmit(Packet):
     name = "SMS-SUBMIT"
     # https://en.wikipedia.org/wiki/GSM_03.40#TPDU_Fields
@@ -139,5 +132,5 @@ class SMSSubmit(Packet):
 
         ConditionalField(FieldLenField("TP_UDHL", None, fmt="B", length_of="TP_UDH"), lambda pkt: pkt.TP_UDHI==1),
         ConditionalField(XStrLenField("TP_UDH", 0, length_from=lambda pkt: pkt.TP_UDHL), lambda pkt: pkt.TP_UDHI==1),
-        XStrLenField("TP_UD", 0, length_from=TP_UDL_calc)
+        XStrLenField("TP_UD", 0, length_from=lambda pkt: pkt.TP_UDL)
     ]
